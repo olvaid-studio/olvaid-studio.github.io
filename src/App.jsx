@@ -97,7 +97,7 @@ export default function App() {
       position: "relative", width: "100vw", height: "100vh",
       background: "#050308", color: "#fff",
       fontFamily: "'Barlow Condensed', sans-serif",
-      overflow: "hidden", cursor: "crosshair",
+      overflow: "hidden", cursor: projectsOpen ? "default" : "crosshair",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
@@ -336,6 +336,13 @@ export default function App() {
         }} />
       )}
 
+      {/* ── OVERLAY CIERRE AL CLICK FUERA ── */}
+      {projectsOpen && (
+        <div onClick={() => setProjectsOpen(false)} style={{
+          position: "fixed", inset: 0, zIndex: 54, cursor: "crosshair",
+        }} />
+      )}
+
       {/* ── TARJETAS DE PROYECTOS ── */}
       {projectsOpen && PROJECTS.map((project, i) => {
         const { side, top } = cardPosition(i, PROJECTS.length);
@@ -348,6 +355,7 @@ export default function App() {
             transform: "translateY(-50%)",
             zIndex: 55,
             width: 220,
+            cursor: "default",
             animation: isRight ? "cardSlideRight 0.5s cubic-bezier(0.16,1,0.3,1) forwards"
                                 : "cardSlideLeft  0.5s cubic-bezier(0.16,1,0.3,1) forwards",
           }}>
@@ -416,6 +424,7 @@ export default function App() {
                   textTransform: "uppercase", padding: "6px 0",
                   textDecoration: "none",
                   display: "block",
+                  cursor: "pointer",
                 }}>VISITAR →</a>
                 <button onClick={() => setProjectsOpen(false)} style={{
                   background: "none", border: "1px solid rgba(255,255,255,0.15)",
@@ -530,12 +539,15 @@ export default function App() {
           animation: loaded ? "lineExpand 1.2s cubic-bezier(0.16,1,0.3,1) 0.9s both" : "none",
         }} />
 
-        <div className="glitch-layer title-main" data-text="OLVAIDLAB" style={{
-          fontFamily: "'Bebas Neue', sans-serif",
-          fontSize: "clamp(56px, 11vw, 140px)",
-          lineHeight: 0.88, letterSpacing: "-0.02em", color: "#fff",
-          textShadow: "0 0 80px rgba(192,132,252,0.15)",
-        }}>
+        <div className="glitch-layer title-main" data-text="OLVAIDLAB"
+          onClick={() => { setProjectsOpen(false); setLightningActive(false); }}
+          style={{
+            fontFamily: "'Bebas Neue', sans-serif",
+            fontSize: "clamp(56px, 11vw, 140px)",
+            lineHeight: 0.88, letterSpacing: "-0.02em", color: "#fff",
+            textShadow: "0 0 80px rgba(192,132,252,0.15)",
+            cursor: projectsOpen ? "pointer" : "crosshair",
+          }}>
           OLVAIDLAB
         </div>
 
