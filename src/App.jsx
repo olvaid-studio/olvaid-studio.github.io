@@ -49,6 +49,7 @@ export default function App() {
   const [lightningPaths, setLightningPaths] = useState([]);
   const [lightningActive, setLightningActive] = useState(false);
   const [screenFlash, setScreenFlash]     = useState(false);
+  const [ambientBolts, setAmbientBolts]   = useState([]);
   const videoRef = useRef(null);
 
   useEffect(() => {
@@ -57,7 +58,28 @@ export default function App() {
       setGlitch(true);
       setTimeout(() => setGlitch(false), 150);
     }, 4500);
-    return () => { clearTimeout(t); clearInterval(gi); };
+
+    // Rayos ambientales aleatorios
+    const scheduleAmbient = () => {
+      const delay = 7000 + Math.random() * 9000; // cada 7-16s
+      return setTimeout(() => {
+        const count = Math.random() < 0.3 ? 2 : 1; // a veces 2 rayos
+        const bolts = Array.from({ length: count }, () => {
+          const fromLeft = Math.random() < 0.5;
+          const startX = fromLeft ? -2 : 102;
+          const endX   = fromLeft ? 102 : -2;
+          const startY = 10 + Math.random() * 80;
+          const endY   = 10 + Math.random() * 80;
+          return { id: Math.random(), path: makeLightningPath(startX, startY, endX, endY, 10) };
+        });
+        setAmbientBolts(bolts);
+        setTimeout(() => setAmbientBolts([]), 500);
+        scheduleAmbient();
+      }, delay);
+    };
+    const ambientTimer = scheduleAmbient();
+
+    return () => { clearTimeout(t); clearInterval(gi); clearTimeout(ambientTimer); };
   }, []);
 
   const handleVerProyectos = useCallback(() => {
@@ -212,6 +234,33 @@ export default function App() {
         video::-webkit-media-controls { display: none !important; }
         video { object-fit: contain; }
       `}</style>
+
+      {/* ── RAYOS AMBIENTALES ── */}
+      {ambientBolts.length > 0 && (
+        <svg key={ambientBolts[0].id} style={{
+          position: "fixed", inset: 0, width: "100vw", height: "100vh",
+          zIndex: 6, pointerEvents: "none",
+        }} viewBox="0 0 100 100" preserveAspectRatio="none">
+          <defs>
+            <filter id="aglow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="0.6" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+          </defs>
+          {ambientBolts.map(bolt => (
+            <g key={bolt.id} style={{ animation: "lightningStrike 0.5s ease-out forwards" }}>
+              <path d={bolt.path} fill="none" stroke="rgba(192,132,252,0.25)"
+                strokeWidth="0.8" filter="url(#aglow)"
+                strokeDasharray="200" strokeDashoffset="200"
+                style={{ animation: "lightningStrike 0.5s ease-out forwards" }} />
+              <path d={bolt.path} fill="none" stroke="rgba(255,255,255,0.5)"
+                strokeWidth="0.2"
+                strokeDasharray="200" strokeDashoffset="200"
+                style={{ animation: "lightningStrike 0.5s ease-out forwards" }} />
+            </g>
+          ))}
+        </svg>
+      )}
 
       {/* SCAN LINES */}
       <div className="scan-lines" />
