@@ -385,12 +385,6 @@ export default function App() {
         }} />
       )}
 
-      {/* ── OVERLAY CIERRE AL CLICK FUERA ── */}
-      {projectsOpen && (
-        <div onClick={() => setProjectsOpen(false)} style={{
-          position: "fixed", inset: 0, zIndex: 54, cursor: "crosshair",
-        }} />
-      )}
 
       {/* ── TARJETAS DE PROYECTOS ── */}
       {projectsOpen && PROJECTS.map((project, i) => {
@@ -579,7 +573,7 @@ export default function App() {
       {/* TÍTULO + SUBTÍTULO + CTA */}
       <div style={{
         position: "absolute", bottom: 0, left: 0, right: 0,
-        zIndex: 10, textAlign: "center", padding: "0 0 52px",
+        zIndex: 56, textAlign: "center", padding: "0 0 52px",
         background: "linear-gradient(to top, rgba(5,3,8,0.95) 40%, transparent 100%)",
       }}>
         <div style={{
