@@ -12,6 +12,18 @@ const HUDBracket = ({ position }) => {
 
 const VIDEO_URL = "https://res.cloudinary.com/dae5xuxoc/video/upload/Olvaidlab_mqb9j8.mp4";
 
+// Genera estrellas una sola vez al cargar el módulo
+const STARS = Array.from({ length: 160 }, (_, i) => ({
+  id: i,
+  x: Math.random() * 100,
+  y: Math.random() * 100,
+  size: 0.5 + Math.random() * 1.5,
+  opacity: 0.2 + Math.random() * 0.6,
+  twinkle: Math.random() < 0.25, // 25% titilan
+  duration: 2 + Math.random() * 4,
+  delay: Math.random() * 5,
+}));
+
 // Proyectos — agrega más aquí cuando estén listos
 const PROJECTS = [
   { id: 1, name: "DOMIS.CL", url: "https://www.domis.cl", desc: "E-commerce · Retail" },
@@ -186,6 +198,10 @@ export default function App() {
           50%  { opacity: 0.25; }
           100% { opacity: 0; }
         }
+        @keyframes twinkle {
+          0%, 100% { opacity: var(--star-op); }
+          50%      { opacity: calc(var(--star-op) * 0.2); }
+        }
 
         .curtain-left  { animation: ${loaded ? "curtainLeft  1.2s cubic-bezier(0.16,1,0.3,1) 0.1s both" : "none"}; }
         .curtain-right { animation: ${loaded ? "curtainRight 1.2s cubic-bezier(0.16,1,0.3,1) 0.1s both" : "none"}; }
@@ -234,6 +250,26 @@ export default function App() {
         video::-webkit-media-controls { display: none !important; }
         video { object-fit: contain; }
       `}</style>
+
+      {/* ── ESTRELLAS ── */}
+      <div style={{ position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden" }}>
+        {STARS.map(s => (
+          <div key={s.id} style={{
+            position: "absolute",
+            left: `${s.x}%`,
+            top: `${s.y}%`,
+            width: s.size,
+            height: s.size,
+            borderRadius: "50%",
+            background: "#fff",
+            "--star-op": s.opacity,
+            opacity: s.opacity,
+            animation: s.twinkle
+              ? `twinkle ${s.duration}s ease-in-out ${s.delay}s infinite`
+              : "none",
+          }} />
+        ))}
+      </div>
 
       {/* ── RAYOS AMBIENTALES ── */}
       {ambientBolts.length > 0 && (
