@@ -1219,10 +1219,10 @@ export default function App() {
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [loaded, setLoaded]               = useState(false);
   const [glitch, setGlitch]               = useState(false);
-  const [projectsOpen, setProjectsOpen]   = useState(false);
-  const [lightningPaths, setLightningPaths] = useState([]);
+  const [visibleProjects, setVisibleProjects] = useState([]);
+  const [lightningPaths, setLightningPaths]   = useState([]);
   const [lightningActive, setLightningActive] = useState(false);
-  const [screenFlash, setScreenFlash]     = useState(false);
+  const [screenFlash, setScreenFlash]         = useState(false);
   const [ambientBolts, setAmbientBolts]   = useState([]);
   const videoRef = useRef(null);
 
@@ -1257,29 +1257,26 @@ export default function App() {
   }, []);
 
   const handleVerProyectos = useCallback(() => {
-    if (projectsOpen) { setProjectsOpen(false); return; }
+    if (visibleProjects.length > 0) { setVisibleProjects([]); return; }
 
-    // Genera un rayo por proyecto, cada uno apunta a su posición en la pared
-    const paths = PROJECTS.map((_, i) => {
-      const { side, top } = cardPosition(i, PROJECTS.length);
+    const fireBolt = (projectIndex, onDone) => {
+      const { side, top } = cardPosition(projectIndex, PROJECTS.length);
       const endX = side === "right" ? 94 : 6;
-      const endY = top;
-      return makeLightningPath(50, 82, endX, endY);
-    });
+      const path = makeLightningPath(50, 82, endX, top);
+      setLightningPaths([path]);
+      setLightningActive(true);
+      setTimeout(() => setScreenFlash(true),  400);
+      setTimeout(() => setScreenFlash(false), 550);
+      setTimeout(() => {
+        setLightningActive(false);
+        setVisibleProjects(prev => [...prev, projectIndex]);
+        onDone?.();
+      }, 700);
+    };
 
-    setLightningPaths(paths);
-    setLightningActive(true);
-
-    // Flash al impactar
-    setTimeout(() => setScreenFlash(true), 400);
-    setTimeout(() => setScreenFlash(false), 550);
-
-    // Mostrar tarjetas
-    setTimeout(() => {
-      setProjectsOpen(true);
-      setLightningActive(false);
-    }, 700);
-  }, [projectsOpen]);
+    // Rayo 1 → tarjeta derecha; cuando termina, rayo 2 → tarjeta izquierda
+    fireBolt(0, () => setTimeout(() => fireBolt(1), 300));
+  }, [visibleProjects]);
 
   const menuItems = [
     { label: "PROYECTOS", action: handleVerProyectos },
@@ -1293,7 +1290,7 @@ export default function App() {
       position: "relative", width: "100vw", height: "100vh",
       background: "#050308", color: "#fff",
       fontFamily: "'Barlow Condensed', sans-serif",
-      overflow: "hidden", cursor: projectsOpen ? "default" : "crosshair",
+      overflow: "hidden", cursor: visibleProjects.length > 0 ? "default" : "crosshair",
     }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@300;400;600;700&display=swap');
@@ -1585,7 +1582,7 @@ export default function App() {
 
 
       {/* ── TARJETAS DE PROYECTOS ── */}
-      {projectsOpen && PROJECTS.map((project, i) => {
+      {PROJECTS.map((project, i) => { if (!visibleProjects.includes(i)) return null;
         const { side, top } = cardPosition(i, PROJECTS.length);
         const isRight = side === "right";
         return (
@@ -1599,8 +1596,6 @@ export default function App() {
             cursor: "default",
             animation: isRight ? "cardSlideRight 0.5s cubic-bezier(0.16,1,0.3,1) forwards"
                                 : "cardSlideLeft  0.5s cubic-bezier(0.16,1,0.3,1) forwards",
-            animationDelay: `${i * 0.35}s`,
-            opacity: 0,
           }}>
             {/* Línea de conexión lateral */}
             <div style={{
@@ -1669,7 +1664,7 @@ export default function App() {
                   display: "block",
                   cursor: "pointer",
                 }}>VISITAR →</a>
-                <button onClick={() => setProjectsOpen(false)} style={{
+                <button onClick={() => setVisibleProjects([])} style={{
                   background: "none", border: "1px solid rgba(255,255,255,0.15)",
                   color: "rgba(255,255,255,0.3)", cursor: "pointer",
                   fontFamily: "'Barlow Condensed', sans-serif",
@@ -1783,13 +1778,13 @@ export default function App() {
         }} />
 
         <div className="glitch-layer title-main" data-text="OLVAIDLAB"
-          onClick={() => { setProjectsOpen(false); setLightningActive(false); }}
+          onClick={() => { setVisibleProjects([]); setLightningActive(false); }}
           style={{
             fontFamily: "'Bebas Neue', sans-serif",
             fontSize: "clamp(56px, 11vw, 140px)",
             lineHeight: 0.88, letterSpacing: "-0.02em", color: "#fff",
             textShadow: "0 0 80px rgba(192,132,252,0.15)",
-            cursor: projectsOpen ? "pointer" : "crosshair",
+            cursor: visibleProjects.length > 0 ? "pointer" : "crosshair",
           }}>
           OLVAIDLAB
         </div>
