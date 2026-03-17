@@ -1235,9 +1235,9 @@ export default function App() {
 
     // Rayos ambientales aleatorios
     const scheduleAmbient = () => {
-      const delay = 7000 + Math.random() * 9000; // cada 7-16s
+      const delay = 3000 + Math.random() * 4000; // cada 3-7s
       return setTimeout(() => {
-        const count = Math.random() < 0.3 ? 2 : 1; // a veces 2 rayos
+        const count = Math.random() < 0.5 ? 2 : 1; // 50% chances de 2 rayos
         const bolts = Array.from({ length: count }, () => {
           const fromLeft = Math.random() < 0.5;
           const startX = fromLeft ? -2 : 102;
