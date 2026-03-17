@@ -1599,6 +1599,8 @@ export default function App() {
             cursor: "default",
             animation: isRight ? "cardSlideRight 0.5s cubic-bezier(0.16,1,0.3,1) forwards"
                                 : "cardSlideLeft  0.5s cubic-bezier(0.16,1,0.3,1) forwards",
+            animationDelay: `${i * 0.35}s`,
+            opacity: 0,
           }}>
             {/* Línea de conexión lateral */}
             <div style={{
