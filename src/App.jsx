@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import { SparklesCore } from "@/components/ui/sparkles";
+import { useState, useEffect, useRef, useCallback, Suspense, lazy } from "react";
+const Spline = lazy(() => import('@splinetool/react-spline'));
 
 const HUDBracket = ({ position }) => {
   const styles = {
@@ -1889,18 +1889,18 @@ export default function App() {
               </button>
             </div>
 
-            {/* Sparkles background */}
-            <div style={{ flex: 1, position: "relative", height: "100%", minHeight: 0, overflow: "hidden" }}>
-              <SparklesCore
-                id="tsparticlescolorful"
-                background="transparent"
-                minSize={0.6}
-                maxSize={1.4}
-                particleDensity={120}
-                className="w-full h-full"
-                particleColor="#00ff00"
-                speed={0.5}
-              />
+            {/* Spline scene */}
+            <div style={{ flex: 1, position: "relative", height: "100%", minHeight: 0 }}>
+              <Suspense fallback={
+                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <span style={{ fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10, letterSpacing: 4, color: "rgba(255,255,255,0.2)" }}>CARGANDO...</span>
+                </div>
+              }>
+                <Spline
+                  scene="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
+                  style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
