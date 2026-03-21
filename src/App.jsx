@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { SparklesCore } from "@/components/ui/sparkles";
 
 const HUDBracket = ({ position }) => {
   const styles = {
@@ -1215,6 +1216,7 @@ function cardPosition(index, total) {
 
 export default function App() {
   const [builderOpen, setBuilderOpen]     = useState(false);
+  const [splineOpen, setSplineOpen]       = useState(false);
   const [menuOpen, setMenuOpen]           = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
   const [loaded, setLoaded]               = useState(false);
@@ -1704,7 +1706,7 @@ export default function App() {
           MENÚ
         </button>
 
-        <button className="try-btn" onClick={() => setBuilderOpen(true)} style={{
+        <button className="try-btn" onClick={() => setSplineOpen(true)} style={{
           background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.3)",
           color: "#fff", fontFamily: "'Barlow Condensed', sans-serif",
           fontSize: 12, fontWeight: 600, letterSpacing: 2,
@@ -1822,6 +1824,87 @@ export default function App() {
 
       {/* BUILDER */}
       {builderOpen && <WebsiteBuilder onClose={() => setBuilderOpen(false)} />}
+
+      {/* SPLINE 3D MODAL */}
+      {splineOpen && (
+        <div
+          onClick={() => setSplineOpen(false)}
+          style={{
+            position: "fixed", inset: 0, zIndex: 200,
+            background: "rgba(0,0,0,0.85)", backdropFilter: "blur(8px)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              width: "90vw", maxWidth: 1100, height: "75vh",
+              background: "#000", borderRadius: 8,
+              border: "1px solid rgba(255,255,255,0.1)",
+              boxShadow: "0 0 80px rgba(132,204,22,0.15), 0 40px 100px rgba(0,0,0,0.8)",
+              overflow: "hidden", position: "relative",
+              display: "flex",
+            }}
+          >
+            {/* Close */}
+            <button
+              onClick={() => setSplineOpen(false)}
+              style={{
+                position: "absolute", top: 14, right: 16, zIndex: 10,
+                background: "none", border: "1px solid rgba(255,255,255,0.2)",
+                color: "rgba(255,255,255,0.5)", cursor: "pointer",
+                fontFamily: "'Barlow Condensed',sans-serif", fontSize: 10,
+                letterSpacing: 2, padding: "3px 10px", borderRadius: 2,
+              }}
+            >✕ CERRAR</button>
+
+            {/* Left text */}
+            <div style={{
+              width: 280, padding: "48px 36px",
+              display: "flex", flexDirection: "column", justifyContent: "center",
+              zIndex: 5, flexShrink: 0,
+            }}>
+              <div style={{ fontSize: 9, letterSpacing: 4, color: "rgba(132,204,22,0.7)", marginBottom: 16 }}>OLVAID STUDIO · 3D PREVIEW</div>
+              <h2 style={{
+                fontFamily: "'Barlow Condensed',sans-serif", fontSize: 42,
+                fontWeight: 700, letterSpacing: 2, color: "#fff",
+                lineHeight: 1.05, margin: 0, textTransform: "uppercase",
+              }}>
+                Interactive<br />3D Scene
+              </h2>
+              <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 20, lineHeight: 1.6, letterSpacing: 0.5 }}>
+                Visualiza tu sitio web en tres dimensiones. Experimenta el diseño antes de construirlo.
+              </p>
+              <button
+                onClick={() => { setSplineOpen(false); setBuilderOpen(true); }}
+                style={{
+                  marginTop: 32, background: "rgba(132,204,22,0.12)",
+                  border: "1px solid rgba(132,204,22,0.4)", color: "#84cc16",
+                  fontFamily: "'Barlow Condensed',sans-serif", fontSize: 11,
+                  letterSpacing: 3, padding: "10px 20px", cursor: "pointer",
+                  textTransform: "uppercase", borderRadius: 2,
+                }}
+              >
+                → CONSTRUIR MI WEB
+              </button>
+            </div>
+
+            {/* Sparkles background */}
+            <div style={{ flex: 1, position: "relative", height: "100%", minHeight: 0, overflow: "hidden" }}>
+              <SparklesCore
+                id="tsparticlescolorful"
+                background="transparent"
+                minSize={0.6}
+                maxSize={1.4}
+                particleDensity={120}
+                className="w-full h-full"
+                particleColor="#00ff00"
+                speed={0.5}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* CONTACT MODAL */}
       {contactModalOpen && (
